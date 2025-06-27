@@ -68,7 +68,7 @@ public class Localize<T extends Enum<T>> {
         localizedStrings = Collections.unmodifiableMap(temp);
 
         // adding a listener to language so that this instance updates itself when the language changes
-        language.addListener((event, oldV, newV) -> {
+        language.addListener((_, oldV, newV) -> {
             if (!oldV.equalsIgnoreCase(newV) && !newV.isBlank()) {
                 loadLanguage();
             }
@@ -97,7 +97,7 @@ public class Localize<T extends Enum<T>> {
         try {
             Path path = (Paths.get(LOCALIZATION_FOLDER_PATH, language, localizeFor));
             load(path);
-        } catch (InvalidPathException e){
+        } catch (InvalidPathException _){
             LOG.severe(() -> "Error finding localization file : " + LOCALIZATION_FOLDER_PATH + " " + language + " " + localizeFor);
         }
     }
@@ -125,7 +125,7 @@ public class Localize<T extends Enum<T>> {
         try {
             Path path = localizationFolder.get().resolve(localizeFor);
             load(path);
-        } catch (InvalidPathException e){
+        } catch (InvalidPathException _){
             LOG.severe(() -> "Error finding localization file : " + localizationFolder + " " + localizeFor);
         }
     }
@@ -146,9 +146,9 @@ public class Localize<T extends Enum<T>> {
                 line = br.readLine();
             }
 
-        } catch (IOException e) {
+        } catch (IOException _) {
             LOG.severe(() -> "Error loading localization file : " + path);
-        } catch (Exception e) {
+        } catch (Exception _) {
             String finalLine = line;
             LOG.warning(() -> "tries to do something with " + finalLine);
         }
@@ -163,7 +163,7 @@ public class Localize<T extends Enum<T>> {
             T key = T.valueOf(enumType, text[0]);
             localizedStrings.get(key).setValue(text[1]);
             notLoaded.remove(key);
-        } catch(IllegalArgumentException e) {
+        } catch(IllegalArgumentException _) {
             LOG.severe(() -> "Target value not found " + text[0] + ".");
         }
     }
