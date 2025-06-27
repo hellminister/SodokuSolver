@@ -1,0 +1,3 @@
+TITLE Solveur de Sodoku
+SOLVE_BUTTON Résoudre
+RESET Réinitialiser
