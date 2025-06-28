@@ -36,13 +36,16 @@ public class Group {
      * removes a value from all other cells in the group
      * @param value the value to remove
      * @param cell the cells that will keep the number
+     * @return whether the call made a change to the grid
      */
-    public void removeValueFromOtherCells(int value, Cell... cell) {
+    public boolean removeValueFromOtherCells(int value, Cell... cell) {
+        boolean change = false;
         Set<Cell> set = Set.of(cell);
         for (Cell cell1 : cells) {
-            if (!set.contains(cell1) && cell1.getPossibilities().size() != 1) {
-                cell1.removeCellValue(value);
+            if (!set.contains(cell1) && cell1.getReadOnlyPossibilities().size() != 1) {
+                change |= cell1.removeCellValue(value);
             }
         }
+        return change;
     }
 }

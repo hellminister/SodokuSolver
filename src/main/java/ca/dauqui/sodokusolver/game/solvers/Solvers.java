@@ -18,7 +18,7 @@ public enum Solvers implements Solver{
     }
 
     @Override
-    public void solve(Grid grid) {
-        solver.solve(grid);
+    public boolean solve(Grid grid) {
+        return solver.solve(grid);
     }
 }

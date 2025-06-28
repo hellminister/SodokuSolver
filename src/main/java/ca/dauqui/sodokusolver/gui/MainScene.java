@@ -77,13 +77,18 @@ public class MainScene extends Scene {
         HBox buttonLine = new HBox();
 
         // This button starts the solving of the puzzle
-        // it runs each solver once per click
+        // it runs each solver iteratively
+        // it continues running the solvers until no more changes is made to the grid
         Button solveButton = new Button();
         solveButton.textProperty().bind(LocalizedText.SOLVE_BUTTON.localizedProperty());
         solveButton.setOnAction(_ -> {
-            for (Solver solver : Solvers.values()) {
-                solver.solve(grid);
-            }
+            boolean changed;
+            do {
+                changed = false;
+                for (Solver solver : Solvers.values()) {
+                    changed |= solver.solve(grid);
+                }
+            } while (changed);
         });
         buttonLine.getChildren().add(solveButton);
 

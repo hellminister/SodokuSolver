@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 
 
 /**
- * This class shows the informations contained in a cell in the gui
+ * This class shows the information contained in a cell in the gui
  */
 class CellShow extends StackPane {
     public static final String SELECTED_COLOR = "lightblue";
@@ -29,7 +29,7 @@ class CellShow extends StackPane {
 
     /**
      * the insets value for the border
-     * the grid lines are created by each cell to be able to do single and double border line width
+     * the grid lines are created by each cell to be able to do borders of single and double line width
      */
     private final String insets;
 
@@ -47,7 +47,7 @@ class CellShow extends StackPane {
 
         // This pane shows all possibilities that can be set in this cell
         GridPane possibilities = new GridPane();
-        // Will be visible only if the cell value isnt chosen
+        // Will be visible only if the cell value isn't chosen
         possibilities.visibleProperty().bind(cell.isChosenProperty().not());
 
         for(int i = 0; i < 3; i++) {
@@ -68,7 +68,7 @@ class CellShow extends StackPane {
                 label.setFont(Font.font("Arial", FontWeight.BOLD, 20));
                 label.setText(value+"");
                 // the value of this position is shown only if it is a valid value for the puzzle
-                label.visibleProperty().bind(Bindings.createBooleanBinding( () -> cell.getPossibilities().contains( value ), cell.getPossibilities() ));
+                label.visibleProperty().bind(Bindings.createBooleanBinding( () -> cell.getReadOnlyPossibilities().contains( value ), cell.getReadOnlyPossibilities() ));
 
                 StackPane toCenter = new StackPane();
                 toCenter.getChildren().add(label);
@@ -78,23 +78,23 @@ class CellShow extends StackPane {
             }
         }
 
-        // This pane shows the number that is chosen for the cell
+        // This pane shows the number chosen for the cell
         StackPane chosenValue = new StackPane();
         chosenValue.visibleProperty().bind(cell.isChosenProperty());
 
         Text chosenValueLabel = new Text();
         chosenValueLabel.setFont(Font.font("Arial", FontWeight.BOLD, 60));
 
-        // sets the only valid number from the cell (ie: the chosen value)
+        // sets the only valid number from the cell (i.e.: the chosen value)
         chosenValueLabel.textProperty().bind(new StringBinding() {
             {
-                bind(cell.getPossibilities());
+                bind(cell.getReadOnlyPossibilities());
             }
 
             @Override
             protected String computeValue() {
-                if (cell.getPossibilities().size() == 1) {
-                    return cell.getPossibilities().toArray()[0].toString();
+                if (cell.getReadOnlyPossibilities().size() == 1) {
+                    return cell.getReadOnlyPossibilities().toArray()[0].toString();
                 }
                 else
                     return "";
@@ -130,7 +130,7 @@ class CellShow extends StackPane {
     }
 
     /**
-     * Calculates the type of border of the cell depending on the position of the cell in the grid
+     * Calculates the type of borders for the cell depending on the position of the cell in the grid
      * Makes small border inside the 3x3 grid and a thick border around each 3x3 grid
      */
     private static String getInsets(Cell cell) {
@@ -165,7 +165,7 @@ class CellShow extends StackPane {
     }
 
     /**
-     * sets the value of the cell if a value isnt already chosen
+     * sets the value of the cell if a value isn't already chosen
      * @param i the value to be set
      */
     public void setValueTo(int i) {

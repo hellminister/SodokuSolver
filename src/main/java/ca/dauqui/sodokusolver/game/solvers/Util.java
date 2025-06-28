@@ -14,7 +14,7 @@ public final class Util {
 
     /**
      * group all cells based on the number they contain
-     * ie all cells that can be 1 are grouped together, all those with 2s together, etc
+     * i.e. all cells that can be 1 are grouped together, all those with 2 together, etc.
      * @param group the cell group to analyze
      * @return an array of sets of the grouped cells each position in the array represents a value-1
      */
@@ -31,7 +31,7 @@ public final class Util {
         for (int i = 0; i < 9; i++) {
             Cell cell = group.getCell(i);
 
-            for (Integer number : cell.getPossibilities()){
+            for (Integer number : cell.getReadOnlyPossibilities()){
                 numbers[number-1].add(cell);
             }
         }

@@ -20,6 +20,11 @@ public class Cell {
      * contains all values that are possible in this cell
      */
     private final SetProperty<Integer> possibilities;
+
+    /**
+     * so other classes can look into, ot listen to the set without risking modification from the outside
+     */
+    private final ObservableSet<Integer> readOnlyPossibilities;
     /**
      * whether the value of the cell is chosen
      */
@@ -48,10 +53,11 @@ public class Cell {
         this.xPos = xPos;
         this.yPos = yPos;
         possibilities = new SimpleSetProperty<>(FXCollections.observableSet());
+        readOnlyPossibilities = FXCollections.unmodifiableObservableSet(possibilities.get());
         chosen = new SimpleBooleanProperty(false);
         set = new SimpleBooleanProperty(false);
         for (int i = 1; i <= 9; i++) {
-            getPossibilities().add(i);
+            getPossibilitiesInternal().add(i);
         }
 
         // a value is chosen if it is the last possible value of the cell
@@ -61,45 +67,56 @@ public class Cell {
     /**
      * @return the possible values of the cell
      */
-    public ObservableSet<Integer> getPossibilities() {
+    private ObservableSet<Integer> getPossibilitiesInternal() {
         return possibilities.get();
+    }
+
+    /**
+     * @return the possible values of the cell (read-only)
+     */
+    public ObservableSet<Integer> getReadOnlyPossibilities() {
+        return readOnlyPossibilities;
     }
 
     /**
      * Sets the value of the cell
      * @param value the value to be set
      * @param manual whether it was set by the user or the program
+     * @return whether the call made a change to the grid
      */
-    public void setCellValue(int value, boolean manual) {
+    public boolean setCellValue(int value, boolean manual) {
         // keep only the value to be set
-        getPossibilities().retainAll(Set.of(value));
-        if (getPossibilities().isEmpty()) {
+        boolean changed = getPossibilitiesInternal().retainAll(Set.of(value));
+        if (getPossibilitiesInternal().isEmpty()) {
             LOG.severe(() -> "Illegal value " + value + " for cell (" + xPos + ", " + yPos + "). It was already removed.");
         }
         set.set(manual);
-
         // remove the set value from all other cells of the groups this cell is a member of
-        horizontalGroup.removeValueFromOtherCells(value, this);
-        verticalGroup.removeValueFromOtherCells(value, this);
-        blockGroup.removeValueFromOtherCells(value, this);
+        changed |= horizontalGroup.removeValueFromOtherCells(value, this);
+        changed |= verticalGroup.removeValueFromOtherCells(value, this);
+        changed |= blockGroup.removeValueFromOtherCells(value, this);
+
+        return changed;
     }
 
     /**
      * remove a value from the cell
      * @param value the value to be removed
+     * @return whether the call made a change to the grid
      */
-    public void removeCellValue(int value) {
-        getPossibilities().remove(value);
-        if (getPossibilities().isEmpty()) {
+    public boolean removeCellValue(int value) {
+        boolean changed = getPossibilitiesInternal().remove(value);
+        if (getPossibilitiesInternal().isEmpty()) {
             LOG.severe(() -> "Illegal value " + value + " for cell (" + xPos + ", " + yPos + "). All values were removed.");
-        } else if (getPossibilities().size() == 1) { // only 1 value left
-            int lastValue = getPossibilities().iterator().next();
+        } else if (getPossibilitiesInternal().size() == 1) { // only 1 value left
+            int lastValue = getPossibilitiesInternal().iterator().next();
             // we remove the last value from all cells from the groups this cell is a member of
-            // we do this since no other cells in those group can be with this value
-            horizontalGroup.removeValueFromOtherCells(lastValue, this);
-            verticalGroup.removeValueFromOtherCells(lastValue, this);
-            blockGroup.removeValueFromOtherCells(lastValue, this);
+            // we do this since no other cells in those groups can be with this value
+            changed |= horizontalGroup.removeValueFromOtherCells(lastValue, this);
+            changed |= verticalGroup.removeValueFromOtherCells(lastValue, this);
+            changed |= blockGroup.removeValueFromOtherCells(lastValue, this);
         }
+        return changed;
     }
 
     /**
@@ -162,7 +179,7 @@ public class Cell {
      * resets the cell to possess all possible values
      */
     public void reset() {
-        ObservableSet<Integer> poss = getPossibilities();
+        ObservableSet<Integer> poss = getPossibilitiesInternal();
         set.set(false);
         poss.clear();
         for (int i = 1; i <= 9; i++) {
@@ -194,13 +211,14 @@ public class Cell {
     /**
      * keeps only the values given in the parameters
      * @param i the list of values to keep
+     * @return whether the call mage a change to the grid
      */
-    public void keepValues(int... i) {
+    public boolean keepValues(int... i) {
         Set<Integer> toKeep = new HashSet<>();
         for (int value : i) {
             toKeep.add(value);
         }
-        getPossibilities().retainAll(toKeep);
+        return getPossibilitiesInternal().retainAll(toKeep);
     }
 
 }
