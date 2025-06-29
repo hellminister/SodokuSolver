@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class Localize<T extends Enum<T>> {
     private static final Logger LOG = Logger.getLogger(Localize.class.getName());
 
-    private static final String LOCALIZATION_FOLDER_PATH = "src/main/resources/language/";
+    private static String LOCALIZATION_FOLDER_PATH = "src/main/resources/language/";
 
     /**
      * Contains the language to load
@@ -34,7 +34,23 @@ public class Localize<T extends Enum<T>> {
     private static final PathProperty localizationFolder = new PathProperty();
 
     /**
-     * Sets the language to use, affects all instance of this class
+     * To set the localization folder path if it is different that the default
+     * (src/main/resources/language/)
+     * @param path the path of the localization folder
+     */
+    public static void setLocalizationFolderPath(String path) {
+        LOCALIZATION_FOLDER_PATH = path;
+    }
+
+    /**
+     * @return the localization folder string
+     */
+    public static String getLocalizationFolder() {
+        return LOCALIZATION_FOLDER_PATH;
+    }
+
+    /**
+     * Sets the language to use, affects all instances of this class
      * @param language the language to use
      */
     public static void setLanguage(String language){
@@ -81,7 +97,7 @@ public class Localize<T extends Enum<T>> {
     }
 
     /**
-     * Use this constructor to have a localization unlinked to the static language
+     * Use this constructor to have a localization unlinked from the static language
      * @param enumType the enum type used to represent the localized strings
      * @param localizeFor the name of the file containing the localized strings
      * @param language the language to use for this instance
@@ -105,6 +121,8 @@ public class Localize<T extends Enum<T>> {
     public static String getLanguage() {
         return language.get();
     }
+
+
 
     /**
      * @return the language used by this instance or blank ("") if it is linked to the static language value

@@ -3,6 +3,7 @@ package ca.dauqui.sodokusolver.gui;
 import ca.dauqui.sodokusolver.game.Grid;
 import ca.dauqui.sodokusolver.game.solvers.Solver;
 import ca.dauqui.sodokusolver.game.solvers.Solvers;
+import ca.dauqui.sodokusolver.localization.LocalizationChoiceBox;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -103,6 +104,9 @@ public class MainScene extends Scene {
         Label resolved = new Label();
         resolved.textProperty().bind(grid.isResolvedProperty().asString());
         buttonLine.getChildren().add(resolved);
+
+        LocalizationChoiceBox languageChoiceBox = new LocalizationChoiceBox();
+        buttonLine.getChildren().add(languageChoiceBox);
 
         root.setTop(buttonLine);
 
